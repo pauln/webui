@@ -68,17 +68,11 @@ size_h=${size#*x}
           <a href="plugin-send2openwall.cgi" title="Open Wall settings"><img src="/a/gear.svg" alt="Gear"></a>
         </div>
       </div>
-    </div>
-    <div class="alert alert-danger small">
-      PTZ feature is not ready. Please consider <a href="https://t.me/OpenIPC">supporting further development</a>.
-    </div>
-
-    <div class="d-grid gap-2 mb-3">
       <div class="input-group">
         <div class="input-group-text">
           <img src="/a/light-off.svg" alt="Image: IR filter indicator" id="ircut-status">
         </div>
-        <button class="form-control btn btn-secondary text-start" type="button" id="ircut">IR-cut filter</button>
+        <button class="form-control btn btn-secondary text-start" type="button" id="toggle-ircut">IR-cut filter</button>
         <div class="input-group-text">
           <a href="majestic-settings.cgi?tab=nightMode" title="Night mode settings"><img src="/a/gear.svg" alt="Gear"></a>
         </div>
@@ -87,12 +81,14 @@ size_h=${size#*x}
         <div class="input-group-text">
           <img src="/a/light-off.svg" alt="Image: IR LED indicator" id="irled-status">
         </div>
-        <button class="form-control btn btn-secondary text-start" type="button" id="irled">IR LED lights</button>
+        <button class="form-control btn btn-secondary text-start" type="button" id="toggle-irled">IR LED lights</button>
         <div class="input-group-text">
           <a href="majestic-settings.cgi?tab=nightMode" title="Night mode settings"><img src="/a/gear.svg" alt="Gear"></a>
         </div>
       </div>
     </div>
+
+    <%in p/joystick.cgi %>
   </div>
 </div>
 
@@ -106,6 +102,14 @@ const network_address = "<%= $network_address %>";
 <% [ "true" != "$telegram_enabled" ] && echo "\$('button[data-sendto=telegram]').disabled = true;" %>
 <% [ "true" != "$yadisk_enabled"   ] && echo "\$('button[data-sendto=yadisk]').disabled = true;" %>
 
+function sendToApi(endpoint) {
+  const xhr = new XMLHttpRequest();
+  xhr.addEventListener("load", reqListener);
+  xhr.open("GET", 'http://' + ipaddr + endpoint);
+  xhr.setRequestHeader("Authorization", "Basic " + btoa("admin:"));
+  xhr.send();
+}
+
 function reqListener(data) {
   console.log(data.responseText);
 }
@@ -115,15 +119,6 @@ $$("a[id^=pan-],a[id^=zoom-]").forEach(el => {
     event.preventDefault();
     alert("Sorry, this feature does not work, yet!");
   });
-});
-
-$("#toggle-night-mode")?.addEventListener("click", event => {
-  event.preventDefault();
-  $('#night-mode-status').src = ($('#night-mode-status').src.split("/").pop() == "light-on.svg") ? "/a/light-off.svg" : "/a/light-on.svg";
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", "/cgi-bin/night.cgi");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr.send("mode=toggle");
 });
 
 $$("button[data-sendto]").forEach(el => {
@@ -142,7 +137,16 @@ $("#speed")?.addEventListener("click", event => {
   event.target.src = (event.target.src.split("/").pop() == "speed-slow.svg") ? "/a/speed-fast.svg" : "/a/speed-slow.svg";
 });
 
-$("#ircut").addEventListener("click", event => {
+$("#toggle-night-mode")?.addEventListener("click", event => {
+  event.preventDefault();
+  $('#night-mode-status').src = ($('#night-mode-status').src.split("/").pop() == "light-on.svg") ? "/a/light-off.svg" : "/a/light-on.svg";
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/cgi-bin/night.cgi");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.send("mode=toggle");
+});
+
+$("#toggle-ircut").addEventListener("click", event => {
   event.preventDefault();
   if ($('#ircut-status').src.split("/").pop() == "light-on.svg") {
     $('#ircut-status').src = "/a/light-off.svg";
@@ -156,7 +160,7 @@ $("#ircut").addEventListener("click", event => {
   xhr.send();
 });
 
-$("#irled").addEventListener("click", event => {
+$("#toggle-irled").addEventListener("click", event => {
   event.preventDefault();
   if ($('#irled-status').src.split("/").pop() == "light-on.svg") {
     $('#irled-status').src = "/a/light-off.svg";
@@ -168,6 +172,19 @@ $("#irled").addEventListener("click", event => {
   const xhr = new XMLHttpRequest();
   xhr.open("GET", "/cgi-bin/j/irled.cgi?mode=" + mode);
   xhr.send();
+});
+
+$$('a[id^=pan-],a[id^=zoom-]').forEach(el => {
+  el.addEventListener('click', event => {
+    event.preventDefault();
+    alert('Sorry, this feature does not work, yet!');
+  });
+});
+
+if ($('#speed')) $('#speed').addEventListener('click', event => {
+  event.preventDefault();
+  event.target.src = (event.target.src.split('/').pop() == 'speed-slow.svg') ? '/img/speed-fast.svg' : '/img/speed-slow.svg';
+  // sendToApi('/speed/toggle');
 });
 </script>
 
