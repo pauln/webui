@@ -53,38 +53,38 @@ button() {
 </style>
 
 <script>
-function move(x, y) {
+function move(command) {
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", "/cgi-bin/j/motors.cgi?x=" + x + "&y=" + y);
-  xhr.send();
+  xhr.open("POST", "http://" + network_address + ":8078/execute");
+  xhr.send("command=" + command);
 }
 
 $$('#ptnav img').forEach(el => el.addEventListener('click', ev => {
   console.log(el.id);
   switch(el.id) {
     case 'pan-up-left':
-      move(-1,1);
+      move(el.id);
       break;
     case 'pan-up':
-      move(0,1);
+      move(el.id);
       break;
     case 'pan-up-right':
-      move(1,1);
+      move(el.id);
       break;
     case 'pan-left':
-      move(-1,0);
+      move(el.id);
       break;
     case 'pan-right':
-      move(1,0);
+      move(el.id);
       break;
     case 'pan-down-left':
-      move(-1,-1);
+      move(el.id);
       break;
     case 'pan-down':
-      move(0,-1);
+      move(el.id);
       break;
     case 'pan-down-right':
-      move(1,-1);
+      move(el.id);
       break;
     default:
       //

@@ -1,0 +1,38 @@
+{
+  "pan-left": {
+    "cmd": "df",
+    "return_output": true
+  },
+  "pan-right": {
+    "cmd": "t31-kmotor -s 900 -d g -x 200"
+  },
+  "pan-up": {
+    "cmd": "t31-kmotor -s 900 -d g -y 200"
+  },
+  "pan-down": {
+    "cmd": "t31-kmotor -s 900 -d g -y -200"
+  },
+  "IR1_on_v3": {
+    "cmd": "gpio set 47"
+  },
+  "IR1_off_v3": {
+    "cmd": "gpio clear 47"
+  },
+  "IR1_on_panv2": {
+    "cmd": "gpio set 60"
+  },
+  "IR1_off_panv2": {
+    "cmd": "gpio clear 60"
+  },
+  "IR2_on_v3": {
+    "cmd": "gpio set 49"
+  },
+  "IR2_off_v3": {
+    "cmd": "gpio clear 49"
+  },
+  "test1": {
+    "cmd": "df -h",
+    "return_output": true
+  }
+}
+
