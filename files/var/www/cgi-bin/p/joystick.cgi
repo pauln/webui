@@ -54,9 +54,17 @@ button() {
 
 <script>
 function move(command) {
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", "http://" + network_address + ":8078/execute");
-  xhr.send("command=" + command);
+  fetch("http://" + network_address + ":8078/execute", {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({'command': command})
+  })
+  .then(response => response.json())
+  .then(result => alert(result))
+  .catch(error => console.log('Request failed', error));
 }
 
 $$('#ptnav img').forEach(el => el.addEventListener('click', ev => {
