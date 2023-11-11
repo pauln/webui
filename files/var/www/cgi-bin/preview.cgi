@@ -77,17 +77,41 @@ size_h=${size#*x}
           <a href="majestic-settings.cgi?tab=nightMode" title="Night mode settings"><img src="/a/gear.svg" alt="Gear"></a>
         </div>
       </div>
+
+<% if fw_printenv -n ir850_led_pin >/dev/null; then %>
       <div class="input-group">
         <div class="input-group-text">
-          <img src="/a/light-off.svg" alt="Image: IR LED indicator" id="irled-status">
+          <img src="/a/light-off.svg" alt="Image: IR LED indicator" id="ir850-led-status">
         </div>
-        <button class="form-control btn btn-secondary text-start" type="button" id="toggle-irled">IR LED lights</button>
+        <button class="form-control btn btn-secondary text-start" type="button" id="toggle-ir850-led">IR LED 850 nm</button>
         <div class="input-group-text">
           <a href="majestic-settings.cgi?tab=nightMode" title="Night mode settings"><img src="/a/gear.svg" alt="Gear"></a>
         </div>
       </div>
+<% fi %>
+<% if fw_printenv -n ir940_led_pin >/dev/null; then %>
+      <div class="input-group">
+        <div class="input-group-text">
+          <img src="/a/light-off.svg" alt="Image: IR LED indicator" id="ir940-led-status">
+        </div>
+        <button class="form-control btn btn-secondary text-start" type="button" id="toggle-ir940-led">IR LED 940 nm</button>
+        <div class="input-group-text">
+          <a href="majestic-settings.cgi?tab=nightMode" title="Night mode settings"><img src="/a/gear.svg" alt="Gear"></a>
+        </div>
+      </div>
+<% fi %>
+<% if fw_printenv -n white_led_pin >/dev/null; then %>
+      <div class="input-group">
+        <div class="input-group-text">
+          <img src="/a/light-off.svg" alt="Image: White LED indicator" id="white-led-status">
+        </div>
+        <button class="form-control btn btn-secondary text-start" type="button" id="toggle-white-led">White Light</button>
+        <div class="input-group-text">
+          <a href="majestic-settings.cgi?tab=nightMode" title="Night mode settings"><img src="/a/gear.svg" alt="Gear"></a>
+        </div>
+      </div>
+<% fi %>
     </div>
-
     <%in p/joystick.cgi %>
   </div>
 </div>
@@ -160,19 +184,23 @@ $("#toggle-ircut").addEventListener("click", event => {
   xhr.send();
 });
 
-$("#toggle-irled").addEventListener("click", event => {
-  event.preventDefault();
-  if ($('#irled-status').src.split("/").pop() == "light-on.svg") {
-    $('#irled-status').src = "/a/light-off.svg";
-    mode = 'off';
-  } else {
-    $('#irled-status').src = "/a/light-on.svg";
-    mode = 'on';
-  }
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", "/cgi-bin/j/irled.cgi?mode=" + mode);
-  xhr.send();
-});
+["ir850", "ir940", "white"].forEach(n => {
+  if ($('#toggle-' + n + '-led'))
+    $('#toggle-' + n + '-led').addEventListener('click', event => {
+      event.preventDefault();
+      if ($('#' + n + '-led-status').src.split('/').pop() == 'light-on.svg') {
+        $('#' + n + '-led-status').src = '/a/light-off.svg';
+        mode = 'off';
+      } else {
+        $('#' + n + '-led-status').src = '/a/light-on.svg';
+        mode = 'on';
+      }
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/cgi-bin/j/light.cgi?type=' + n + '&mode=' + mode);
+      xhr.send();
+    });
+})
+
 
 $$('a[id^=pan-],a[id^=zoom-]').forEach(el => {
   el.addEventListener('click', event => {
