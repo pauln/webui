@@ -83,7 +83,7 @@ size_h=${size#*x}
       </div>
     </div>
     </div>
-    <a href="rtsp://root:987987@<%= $network_address %>:554/stream=0" target=_blank>open rtsp</a>
+    <a href="rtsp://nobody:987987@<%= $network_address %>:554/stream=0" target="_blank">open rtsp</a>
   </div>
 </div>
 
